@@ -1,4 +1,3 @@
-
 import os
 import platform
 import subprocess
@@ -40,7 +39,7 @@ def install_requirements():
     subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
     os.system("python app.py")
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     install_ffmpeg()
     install_requirements()
     print("✅ Setup completed successfully.")
