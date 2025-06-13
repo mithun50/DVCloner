@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desi Voice Cloner | AI4Bharat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-microphone-alt"></i>
+        <h1>Desi Voice Cloner</h1>
+      </div>
+      <p class="subtitle">Clone your voice in Indian languages.</p>
+      <div class="language-note">
+        <i class="fas fa-info-circle"></i>
+        <p><strong>Note:</strong> This tool only supports Indian languages. English text is not supported in either the input text or reference text fields.</p>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <div class="form-section">
+        <div class="card">
+          <form id="cloneForm" method="POST" enctype="multipart/form-data" action="/synthesize">
+            <div class="form-group">
+              <label for="text">Text to Synthesize</label>
+              <textarea id="text" name="text" class="input-field" 
+              placeholder="Enter text in selected Indian language (English not supported)..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Upload Voice Sample</label>
+              <div class="file-upload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Click to upload audio file</p>
+                <p class="small">(wav, mp3, m4a, etc.)</p>
+                <input type="file" id="audioInput" name="audio" accept="audio/*" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="ref_text">Reference Text</label>
+              <textarea id="ref_text" name="ref_text" class="input-field" 
+                        placeholder="Enter what was spoken in your sample audio (Indian language only)..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <p class="small" style="color: var(--gray); margin-bottom: 1.5rem; font-style: italic;">
+                <i class="fas fa-info-circle"></i> Note: Only Indian language text is supported (English not accepted)
+              </p>
+              <label>Select Language</label>
+              <div class="language-selector">
+                <label class="language-option selected">
+                  <input type="radio" name="language" value="kn" checked> kn
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="hi"> hi
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="ta"> ta
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="te"> te
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="gu"> gu
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="ml"> ml
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="mr"> mr
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="bn"> bn
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="pa"> pa
+                </label>
+                <label class="language-option">
+                  <input type="radio" name="language" value="or"> or
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="btn">
+              <i class="fas fa-magic"></i> Generate Voice
+            </button>
+          </form>
+        </div>
+
+        <div id="loader">
+          <div class="spinner"></div>
+          <p>Cloning your voice...</p>
+          <p class="small">This may take a few moments</p>
+        </div>
+
+        <div id="result">
+          <div class="result-card">
+            <div class="result-header">
+              <i class="fas fa-check-circle"></i>
+              <h3>Voice Clone Generated!</h3>
+            </div>
+            <audio controls></audio>
+            <a href="#" class="download-btn" download>
+              <i class="fas fa-download"></i> Download Output
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="card">
+          <h3><i class="fas fa-users"></i> Contributors</h3>
+          <p>You can contribute to this project on <a href="https://github.com/mithun50/DVCloner" target="_blank">GitHub</a>.</p>
+          <div id="contributors" class="contributors"></div>
+        </div>
+
+        <div class="card info-card">
+          <h3><i class="fas fa-info-circle"></i> How to Use</h3>
+          <ul>
+            <li>Enter text in your chosen Indian language</li>
+            <li>Upload a clear audio sample (10-30 seconds recommended)</li>
+            <li>Type exactly what was spoken in the audio</li>
+            <li>Select the appropriate language</li>
+            <li>Click Generate Voice</li>
+          </ul>
+        </div>
+
+        <div class="card features-card">
+          <h3><i class="fas fa-star"></i> Features</h3>
+          <div class="feature-list">
+            <div class="feature-item">
+              <i class="fas fa-language"></i>
+              <span>10+ Indian Languages</span>
+            </div>
+            <div class="feature-item">
+              <i class="fas fa-microphone"></i>
+              <span>High Quality Voice Cloning</span>
+            </div>
+            <div class="feature-item">
+              <i class="fas fa-download"></i>
+              <span>Instant Download</span>
+            </div>
+            <div class="feature-item">
+              <i class="fas fa-shield-alt"></i>
+              <span>Privacy Focused</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p class="small" style="color: var(--gray); margin-bottom: 1.5rem; font-style: italic;">
+        <i class="fas fa-info-circle"></i> Note: Only Indian language text is supported (English not accepted)
+      </p>
+      <p>Desi Voice Cloner is based on <a href="https://ai4bharat.org/" target="_blank">AI4Bharat</a>'s IndicF5. It supports major Indian languages.</p>
+      <p>Created for educational and experimental use only.</p>
+      <p>© 2025 Desi Voice Cloner. All rights reserved. <a href="https://github.com/mithun50/" target="_blank">@Mithun Gowda B</a></p>
+    </footer>
+  </div>
+
+  <script src="/static/script/script.js"></script>
+</body>
+</html>
