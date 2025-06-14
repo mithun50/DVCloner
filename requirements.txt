@@ -1,2 +1,3 @@
 Flask
 gradio_client
+ffmpeg-python
