@@ -1,0 +1,586 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Desi Voice Cloner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-xl);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-xl);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .metric-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-200);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
+    }
+
+    .metric-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--white);
+    }
+
+    .metric-icon.visitors { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .metric-icon.synthesis { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .metric-icon.success { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .metric-icon.storage { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-xs);
+    }
+
+    .metric-label {
+      color: var(--gray-600);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .metric-trend {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+    }
+
+    .metric-trend.positive {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .chart-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-200);
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .chart-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    .language-stats {
+      display: grid;
+      gap: var(--space-md);
+    }
+
+    .language-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-md);
+      background: var(--gray-50);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--gray-200);
+    }
+
+    .language-name {
+      font-weight: 500;
+      color: var(--gray-900);
+    }
+
+    .language-count {
+      background: var(--primary);
+      color: var(--white);
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .actions-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .action-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-200);
+    }
+
+    .action-button {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+    }
+
+    .action-button.danger {
+      background: var(--error);
+      color: var(--white);
+    }
+
+    .action-button.danger:hover {
+      background: #dc2626;
+    }
+
+    .action-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .system-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--gray-600);
+      font-size: 0.875rem;
+    }
+
+    .info-value {
+      font-weight: 500;
+      color: var(--gray-900);
+    }
+
+    .alert {
+      padding: var(--space-lg);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .alert.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--success);
+    }
+
+    .alert.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: var(--error);
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-user-shield"></i>
+        <h1>Admin Dashboard</h1>
+      </div>
+      <p class="subtitle">Desi Voice Cloner Analytics & Management</p>
+    </header>
+
+    <div id="alerts"></div>
+
+    <!-- Key Metrics -->
+    <div class="dashboard-grid">
+      <div class="metric-card">
+        <div class="metric-header">
+          <div>
+            <div class="metric-value">{{ total_visitors }}</div>
+            <div class="metric-label">Total Visitors</div>
+          </div>
+          <div class="metric-icon visitors">
+            <i class="fas fa-users"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <div>
+            <div class="metric-value">{{ analytics.synthesis_count }}</div>
+            <div class="metric-label">Voice Syntheses</div>
+          </div>
+          <div class="metric-icon synthesis">
+            <i class="fas fa-microphone"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <div>
+            <div class="metric-value">{{ success_rate }}%</div>
+            <div class="metric-label">Success Rate</div>
+          </div>
+          <div class="metric-icon success">
+            <i class="fas fa-chart-line"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <div>
+            <div class="metric-value">{{ system_stats.upload_folder_size + system_stats.output_folder_size }}</div>
+            <div class="metric-label">Storage Used (MB)</div>
+          </div>
+          <div class="metric-icon storage">
+            <i class="fas fa-hdd"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">
+            <i class="fas fa-chart-area"></i>
+            Daily Visitors
+          </h3>
+        </div>
+        <div class="chart-container">
+          <canvas id="visitorsChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">
+            <i class="fas fa-language"></i>
+            Language Usage
+          </h3>
+        </div>
+        <div class="language-stats">
+          {% for lang_code, count in analytics.language_usage.items() %}
+          <div class="language-item">
+            <span class="language-name">{{ language_names.get(lang_code, lang_code.upper()) }}</span>
+            <span class="language-count">{{ count }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Charts -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">
+            <i class="fas fa-clock"></i>
+            Hourly Activity
+          </h3>
+        </div>
+        <div class="chart-container">
+          <canvas id="hourlyChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">
+            <i class="fas fa-info-circle"></i>
+            System Information
+          </h3>
+        </div>
+        <div class="system-info">
+          <div class="info-item">
+            <span class="info-label">Upload Files</span>
+            <span class="info-value">{{ system_stats.upload_file_count }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Output Files</span>
+            <span class="info-value">{{ system_stats.output_file_count }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Upload Storage</span>
+            <span class="info-value">{{ system_stats.upload_folder_size }} MB</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Output Storage</span>
+            <span class="info-value">{{ system_stats.output_folder_size }} MB</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Error Count</span>
+            <span class="info-value">{{ analytics.error_count }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Avg Text Length</span>
+            <span class="info-value">{{ "%.0f"|format(analytics.avg_text_length) }} chars</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Popular Language</span>
+            <span class="info-value">{{ popular_language }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">File Uploads</span>
+            <span class="info-value">{{ analytics.file_uploads }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Management Actions -->
+    <div class="actions-panel">
+      <div class="action-card">
+        <h3><i class="fas fa-trash"></i> File Management</h3>
+        <p class="small" style="margin-bottom: var(--space-md); color: var(--gray-600);">
+          Clear temporary files to free up storage space
+        </p>
+        <button class="action-button danger" onclick="clearFiles()">
+          <i class="fas fa-trash"></i>
+          Clear All Files
+        </button>
+      </div>
+
+      <div class="action-card">
+        <h3><i class="fas fa-download"></i> Export Data</h3>
+        <p class="small" style="margin-bottom: var(--space-md); color: var(--gray-600);">
+          Download analytics and visitor data
+        </p>
+        <button class="action-button" style="background: var(--primary); color: var(--white);" onclick="exportData()">
+          <i class="fas fa-download"></i>
+          Export Analytics
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Visitor Chart
+    const visitorCtx = document.getElementById('visitorsChart').getContext('2d');
+    new Chart(visitorCtx, {
+      type: 'line',
+      data: {
+        labels: {{ dates|tojson }},
+        datasets: [{
+          label: 'Daily Visitors',
+          data: {{ counts|tojson }},
+          backgroundColor: 'rgba(79, 70, 229, 0.1)',
+          borderColor: 'rgba(79, 70, 229, 1)',
+          borderWidth: 3,
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          }
+        }
+      }
+    });
+
+    // Hourly Activity Chart
+    const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+    new Chart(hourlyCtx, {
+      type: 'bar',
+      data: {
+        labels: {{ hourly_labels|tojson }},
+        datasets: [{
+          label: 'Activity',
+          data: {{ hourly_data|tojson }},
+          backgroundColor: 'rgba(16, 185, 129, 0.8)',
+          borderColor: 'rgba(16, 185, 129, 1)',
+          borderWidth: 1,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          }
+        }
+      }
+    });
+
+    // Management Functions
+    function clearFiles() {
+      if (confirm('Are you sure you want to clear all temporary files? This action cannot be undone.')) {
+        const password = new URLSearchParams(window.location.search).get('password');
+        
+        fetch(`/admin/clear-files?password=${password}`, {
+          method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+          showAlert(data.success ? 'success' : 'error', data.message || data.error);
+          if (data.success) {
+            setTimeout(() => location.reload(), 2000);
+          }
+        })
+        .catch(error => {
+          showAlert('error', 'Failed to clear files: ' + error.message);
+        });
+      }
+    }
+
+    function exportData() {
+      const data = {
+        visitors: {{ total_visitors }},
+        analytics: {{ analytics|tojson }},
+        system_stats: {{ system_stats|tojson }},
+        export_date: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `admin_data_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showAlert('success', 'Analytics data exported successfully!');
+    }
+
+    function showAlert(type, message) {
+      const alertsContainer = document.getElementById('alerts');
+      const alert = document.createElement('div');
+      alert.className = `alert ${type}`;
+      alert.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+        ${message}
+      `;
+      
+      alertsContainer.appendChild(alert);
+      
+      setTimeout(() => {
+        alert.remove();
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
