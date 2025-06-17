@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Desi Voice Cloner</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
@@ -15,10 +15,10 @@
         <i class="fas fa-microphone-alt"></i>
         <h1>Desi Voice Cloner</h1>
       </div>
-      <p class="subtitle">Clone your voice in Indian languages.</p>
+      <p class="subtitle">Clone your voice in Indian languages with AI</p>
       <div class="language-note">
         <i class="fas fa-info-circle"></i>
-        <p><strong>Note:</strong> This tool only supports Indian languages. English text is not supported in either the input text or reference text fields.</p>
+        <p><strong>Important:</strong> This tool supports Indian languages only. English text is not supported.</p>
       </div>
     </header>
 
@@ -29,73 +29,94 @@
             <div class="form-group">
               <label for="text">Text to Synthesize</label>
               <textarea id="text" name="text" class="input-field" 
-              placeholder="Enter text in selected Indian language (English not supported)..." required></textarea>
+                        placeholder="Enter text in your selected Indian language..." required></textarea>
+              
+              <div class="examples-section">
+                <label>Quick Examples</label>
+                <div class="examples-grid">
+                  {% for lang_code, example in examples.items() %}
+                  <button type="button" class="example-btn" 
+                          data-lang="{{ lang_code }}" 
+                          data-text="{{ example.text }}" 
+                          data-ref="{{ example.ref_text }}">
+                    {{ language_names[lang_code] }}
+                  </button>
+                  {% endfor %}
+                </div>
+              </div>
             </div>
 
             <div class="form-group">
               <label>Upload Voice Sample</label>
               <div class="file-upload">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <p>Click to upload audio file</p>
-                <p class="small">(wav, mp3, m4a, etc.)</p>
+                <p>Click to upload or drag and drop</p>
+                <p class="small">Supports: WAV, MP3, M4A (Max 50MB)</p>
                 <input type="file" id="audioInput" name="audio" accept="audio/*" required>
+              </div>
+              
+              <div id="audioPreview" style="display: none; margin-top: 1rem;">
+                <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: var(--space-lg);">
+                  <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                    <i class="fas fa-headphones" style="color: var(--primary);"></i>
+                    <span style="font-weight: 500; color: var(--gray-700); font-size: 0.875rem;">Audio Preview</span>
+                  </div>
+                  <audio id="uploadedAudio" controls style="width: 100%;"></audio>
+                </div>
               </div>
             </div>
 
             <div class="form-group">
               <label for="ref_text">Reference Text</label>
               <textarea id="ref_text" name="ref_text" class="input-field" 
-                        placeholder="Enter what was spoken in your sample audio (Indian language only)..." required></textarea>
+                        placeholder="Enter what was spoken in your audio sample..." required></textarea>
             </div>
 
             <div class="form-group">
-              <p class="small" style="color: var(--gray); margin-bottom: 1.5rem; font-style: italic;">
-                <i class="fas fa-info-circle"></i> Note: Only Indian language text is supported (English not accepted)
-              </p>
               <label>Select Language</label>
               <div class="language-selector">
                 <label class="language-option selected">
-                  <input type="radio" name="language" value="kn" checked> kn
+                  <input type="radio" name="language" value="kn" checked> Kn
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="hi"> hi
+                  <input type="radio" name="language" value="hi"> Hi
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="ta"> ta
+                  <input type="radio" name="language" value="ta"> Ta
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="te"> te
+                  <input type="radio" name="language" value="te"> Te
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="gu"> gu
+                  <input type="radio" name="language" value="gu"> Gu
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="ml"> ml
+                  <input type="radio" name="language" value="ml">Ml
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="mr"> mr
+                  <input type="radio" name="language" value="mr"> Mr
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="bn"> bn
+                  <input type="radio" name="language" value="bn"> Bn
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="pa"> pa
+                  <input type="radio" name="language" value="pa"> Pa
                 </label>
                 <label class="language-option">
-                  <input type="radio" name="language" value="or"> or
+                  <input type="radio" name="language" value="or"> Or
                 </label>
               </div>
             </div>
 
             <button type="submit" class="btn">
-              <i class="fas fa-magic"></i> Generate Voice
+              <i class="fas fa-magic"></i> Generate Voice Clone
             </button>
           </form>
         </div>
 
         <div id="loader">
           <div class="spinner"></div>
-          <p>Cloning your voice...</p>
+          <p>Processing your voice clone...</p>
           <p class="small">This may take a few moments</p>
         </div>
 
@@ -103,35 +124,36 @@
           <div class="result-card">
             <div class="result-header">
               <i class="fas fa-check-circle"></i>
-              <h3>Voice Clone Generated!</h3>
+              <h3>Voice Clone Ready!</h3>
             </div>
             <audio controls></audio>
             <a href="#" class="download-btn" download>
-              <i class="fas fa-download"></i> Download Output
+              <i class="fas fa-download"></i> Download Audio
             </a>
           </div>
         </div>
       </div>
 
       <div class="sidebar">
+          
         <div class="card">
           <h3><i class="fas fa-users"></i> Contributors</h3>
-          <p>You can contribute to this project on <a href="https://github.com/mithun50/DVCloner" target="_blank">GitHub</a>.</p>
+          <p class="small">Contribute to this project on <a href="https://github.com/mithun50/DVCloner" target="_blank">GitHub</a></p>
           <div id="contributors" class="contributors"></div>
-        </div>
-
-        <div class="card info-card">
-          <h3><i class="fas fa-info-circle"></i> How to Use</h3>
+          </div>
+          
+        <div class="card">
+          <h3><i class="fas fa-lightbulb"></i> How to Use</h3>
           <ul>
             <li>Enter text in your chosen Indian language</li>
-            <li>Upload a clear audio sample (10-30 seconds recommended)</li>
+            <li>Upload a clear audio sample (10-30 seconds)</li>
             <li>Type exactly what was spoken in the audio</li>
             <li>Select the appropriate language</li>
-            <li>Click Generate Voice</li>
+            <li>Click Generate Voice Clone</li>
           </ul>
         </div>
 
-        <div class="card features-card">
+        <div class="card">
           <h3><i class="fas fa-star"></i> Features</h3>
           <div class="feature-list">
             <div class="feature-item">
@@ -152,19 +174,19 @@
             </div>
           </div>
         </div>
+
+        </div>
       </div>
     </div>
 
     <footer>
-      <p class="small" style="color: var(--gray); margin-bottom: 1.5rem; font-style: italic;">
-        <i class="fas fa-info-circle"></i> Note: Only Indian language text is supported (English not accepted)
-      </p>
-      <p>Desi Voice Cloner is based on <a href="https://ai4bharat.org/" target="_blank">AI4Bharat</a>'s IndicF5. It supports major Indian languages.</p>
-      <p>Created for educational and experimental use only.</p>
-      <p>© 2025 Desi Voice Cloner. All rights reserved. <a href="https://github.com/mithun50/" target="_blank">@Mithun Gowda B</a></p>
+      <p>Built with <a href="https://ai4bharat.org/" target="_blank">AI4Bharat</a>'s IndicF5 for Indian language voice synthesis</p>
+      <p>Created by <a href="https://github.com/mithun50/" target="_blank">Mithun Gowda B</a> • Open source on <a href="https://github.com/mithun50/DVCloner" target="_blank">GitHub</a></p>
+      <p class="small">For educational and experimental use only</p>
     </footer>
   </div>
 
   <script src="/static/script/script.js"></script>
 </body>
 </html>
+
